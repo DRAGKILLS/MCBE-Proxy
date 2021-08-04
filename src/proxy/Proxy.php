@@ -63,7 +63,7 @@ class Proxy{
 			if(@socket_recvfrom($this->socket, $buffer, 65535, 0, $address, $port) !== false){
 				$internetAddress = new Address($address, $port);
 				if(!$this->client->connected){
-					switch(ord($buffer{0})){
+					switch(ord($buffer[0])){
 						case UnconnectedPing::$ID:
 							$this->client->address = $internetAddress;
 							$this->sendToServer($buffer);
