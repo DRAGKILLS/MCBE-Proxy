@@ -33,7 +33,7 @@ class Packet{
 	 * @return null|DataPacket
 	 */
 	public static function readDataPacket(string $buffer) : ?DataPacket{
-		$pid = ord($buffer{0});
+		$pid = ord($buffer[0]);
 		if(($pid & Datagram::BITFLAG_VALID) !== 0){
 			if($pid & Datagram::BITFLAG_ACK){
 				//todo
