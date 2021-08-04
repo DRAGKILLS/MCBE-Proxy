@@ -23,7 +23,7 @@ class Server extends BaseHost{
 	 * @return null|string
 	 */
 	public function getName() : ?string{
-		return isset($this->data[0]) ? $this->data[0] : null;
+		return $this->data[0] ?? null;
 	}
 
 	/**
@@ -31,7 +31,7 @@ class Server extends BaseHost{
 	 * @return string|null
 	 */
 	public function getProtocol() : ?string{
-		return isset($this->data[1]) ? $this->data[1] : null;
+		return $this->data[1] ?? null;
 	}
 
 	/**
@@ -39,6 +39,6 @@ class Server extends BaseHost{
 	 * @return string|null
 	 */
 	public function getVersion() : ?string{
-		return isset($this->data[2]) ? $this->data[2] : null;
+		return $this->data[2] ?? null;
 	}
 }
