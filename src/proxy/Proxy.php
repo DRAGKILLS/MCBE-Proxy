@@ -19,6 +19,7 @@ use raklib\protocol\{
 };
 
 class Proxy{
+
 	/** @var resource $socket */
 	private $socket;
 	/** @var Server $server */
