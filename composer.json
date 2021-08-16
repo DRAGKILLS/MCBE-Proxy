@@ -1,5 +1,5 @@
 {
-  "name": "Frago9876543210/MCPE-Proxy",
+  "name": "frago9876543210/mcpeproxy",
   "description": "Proxy for a Minecraft BE. It allows you to intercept packets and send packets.",
   "type": "project",
   "homepage": "https://github.com/Frago9876543210/MCPE-Proxy",
