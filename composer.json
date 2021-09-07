@@ -39,7 +39,7 @@
 	{
 	  "type": "vcs",
 	  "name": "pocketmine/pocketmine-mp",
-	  "url": "https://github.com/pmmp/PocketMine-MP/tree/3.0.0"
+	  "url": "https://github.com/pmmp/PocketMine-MP/tree/1.7dev-27"
 	},
 	{
 	  "type": "vcs",
