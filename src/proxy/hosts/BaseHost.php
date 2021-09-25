@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace proxy\hosts;
 
-
 use pocketmine\network\mcpe\protocol\DataPacket;
 use proxy\Proxy;
 use proxy\utils\Address;
 use proxy\utils\Packet;
 
 abstract class BaseHost{
+
 	/** @var Proxy $proxy */
 	protected $proxy;
 	/** @var string $address */
