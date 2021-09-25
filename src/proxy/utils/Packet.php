@@ -62,12 +62,12 @@ class Packet{
 	}
 
 	public static function decodeSplit(EncapsulatedPacket $packet) : ?EncapsulatedPacket{
-		if($packet->splitCount >= Session::MAX_SPLIT_SIZE or $packet->splitIndex >= Session::MAX_SPLIT_SIZE or $packet->splitIndex < 0){
+		if($packet->splitCount >= 128 or $packet->splitIndex >= 128 or $packet->splitIndex < 0){
 			return null;
 		}
 
 		if(!isset(self::$splitPackets[$packet->splitID])){
-			if(count(self::$splitPackets) >= Session::MAX_SPLIT_COUNT){
+			if(count(self::$splitPackets) >= Session::MIN_MTU_SIZE){
 				return null;
 			}
 			self::$splitPackets[$packet->splitID] = [$packet->splitIndex => $packet];
@@ -76,7 +76,7 @@ class Packet{
 		}
 
 		if(count(self::$splitPackets[$packet->splitID]) === $packet->splitCount){
-			$pk = new EncapsulatedPacket;
+			$pk = new EncapsulatedPacket();
 			$pk->buffer = "";
 			for($i = 0; $i < $packet->splitCount; ++$i){
 				$pk->buffer .= self::$splitPackets[$packet->splitID][$i]->buffer;
@@ -91,7 +91,7 @@ class Packet{
 
 	public static function decodeBatch(EncapsulatedPacket $encapsulatedPacket) : ?DataPacket{
 		/** @var $batch BatchPacket */
-		if(($batch = PacketPool::getPacket($encapsulatedPacket->buffer)) instanceof BatchPacket){
+		if(($batch = self::getPacket($encapsulatedPacket->buffer)) instanceof BatchPacket){
 			@$batch->decode();
 			if($batch->payload !== "" && is_string($batch->payload)){
 				foreach($batch->getPackets() as $buf){
@@ -108,17 +108,24 @@ class Packet{
 	 * @internal param int $seqNumber
 	 */
 	public static function writeDataPacket(DataPacket $packet, BaseHost $baseHost) : void{
-		$batch = new BatchPacket;
+		$batch = new BatchPacket();
 		$batch->addPacket($packet);
 		$batch->setCompressionLevel(7);
 		$batch->encode();
-		$encapsulated = new EncapsulatedPacket;
+		$encapsulated = new EncapsulatedPacket();
 		$encapsulated->reliability = 0;
 		$encapsulated->buffer = $batch->buffer;
-		$dataPacket = new Datagram;
+		$dataPacket = new Datagram();
 		$dataPacket->seqNumber = self::$number++;
 		$dataPacket->packets = [$encapsulated];
 		$dataPacket->encode();
 		$baseHost->writePacket($dataPacket->buffer);
 	}
+
+    public static function getPacket(string $buffer): DataPacket
+    {
+        $pk = PacketPool::getPacketById(ord($buffer[0]));
+        $pk->setBuffer($buffer);
+        return $pk;
+    }
 }
