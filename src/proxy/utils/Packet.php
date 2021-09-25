@@ -15,7 +15,9 @@ use raklib\protocol\{
 use raklib\server\Session;
 
 class Packet{
-	/** @var int $number */
+    
+    const MAX_SPLIT_SIZE = 128;
+    /** @var int $number */
 	private static $number = 0;
 	/** @var Datagram[][] $splitPackets */
 	private static $splitPackets = [];
@@ -62,12 +64,12 @@ class Packet{
 	}
 
 	public static function decodeSplit(EncapsulatedPacket $packet) : ?EncapsulatedPacket{
-		if($packet->splitCount >= 128 or $packet->splitIndex >= 128 or $packet->splitIndex < 0){
+		if($packet->splitCount >= self::MAX_SPLIT_SIZE or $packet->splitIndex >= self::MAX_SPLIT_SIZE or $packet->splitIndex < 0){
 			return null;
 		}
 
 		if(!isset(self::$splitPackets[$packet->splitID])){
-			if(count(self::$splitPackets) >= Session::MIN_MTU_SIZE){
+			if(count(self::$splitPackets) >= self::MAX_SPLIT_SIZE){
 				return null;
 			}
 			self::$splitPackets[$packet->splitID] = [$packet->splitIndex => $packet];
