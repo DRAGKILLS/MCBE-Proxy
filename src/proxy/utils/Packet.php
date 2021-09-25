@@ -16,7 +16,8 @@ use raklib\server\Session;
 
 class Packet{
 
-    const MAX_SPLIT_SIZE = 128;
+    public const MAX_SPLIT_SIZE = 128;
+    public const MAX_SPLIT_COUNT = 4;
     /** @var int $number */
     private static $number = 0;
     /** @var Datagram[][] $splitPackets */
@@ -69,7 +70,7 @@ class Packet{
         }
 
         if(!isset(self::$splitPackets[$packet->splitID])){
-            if(count(self::$splitPackets) >= self::MAX_SPLIT_SIZE){
+            if(count(self::$splitPackets) >= self::MAX_SPLIT_COUNT){
                 return null;
             }
             self::$splitPackets[$packet->splitID] = [$packet->splitIndex => $packet];
@@ -97,7 +98,7 @@ class Packet{
             @$batch->decode();
             if($batch->payload !== "" && is_string($batch->payload)){
                 foreach($batch->getPackets() as $buf){
-                    return PacketPool::getPacket($buf);
+                    return self::getPacket($buf);
                 }
             }
         }
