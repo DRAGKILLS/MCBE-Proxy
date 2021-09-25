@@ -1,9 +1,4 @@
 {
-  "name": "frago9876543210/mcpeproxy",
-  "description": "Proxy for a Minecraft BE. It allows you to intercept packets and send packets.",
-  "type": "project",
-  "homepage": "https://github.com/Frago9876543210/MCPE-Proxy",
-  "license": "GPL-3.0",
   "require": {
 	"php": ">=7.4",
 	"ext-bcmath": "*",
@@ -21,12 +16,12 @@
 	"ext-yaml": ">=2.0.0",
 	"ext-zip": "*",
 	"ext-zlib": ">=1.2.11",
-	"pocketmine/pocketmine-mp": "dev-master",
-	"pocketmine/raklib": "dev-master",
-	"pocketmine/spl": "dev-master",
-	"pocketmine/binaryutils": "dev-master",
-	"pocketmine/nbt": "dev-master",
-	"pocketmine/math": "dev-master"
+	"pocketmine/pocketmine-mp": "*",
+	"pocketmine/raklib": "*",
+	"pocketmine/spl": "*",
+	"pocketmine/binaryutils": "*",
+	"pocketmine/nbt": "*",
+	"pocketmine/math": "*"
   },
   "autoload": {
 	"psr-4": {
@@ -39,11 +34,11 @@
 	{
 	  "type": "vcs",
 	  "name": "pocketmine/pocketmine-mp",
-	  "url": "https://github.com/pmmp/PocketMine-MP/tree/3.0.0"
+	  "url": "https://github.com/pmmp/PocketMine-MP"
 	},
 	{
 	  "type": "vcs",
-	  "url": "https://github.com/pmmp/RakLib/tree/0.12.4"
+	  "url": "https://github.com/pmmp/RakLib"
 	},
 	{
 	  "type": "vcs",
