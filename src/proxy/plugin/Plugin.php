@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace proxy\plugin;
 
-
 use pocketmine\network\mcpe\protocol\DataPacket;
 use proxy\Proxy;
 
 abstract class Plugin{
+
 	/** @var Proxy */
 	protected $proxy;
 
