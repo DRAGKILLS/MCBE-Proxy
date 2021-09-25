@@ -42,7 +42,6 @@ class Client extends BaseHost{
 		$pk = new TextPacket();
 		$pk->type = $type;
 		$pk->message = $message;
-		$pk->source = "";
 		$this->dataPacket($pk);
 	}
 
