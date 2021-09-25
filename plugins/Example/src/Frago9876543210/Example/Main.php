@@ -34,9 +34,10 @@ class Main extends Plugin{
 		if($packet instanceof TextPacket){
 			$packet->decode();
 			//way to create chat commands
-			if($packet->message === ".test"){
-				$this->proxy->getClient()->sendMessage("example message");
-				return false; //to cancel packet
+                        switch ($packet->message){
+				case ".help":
+				    $this->proxy->getClient()->sendMessage("help:\nsoon");
+				    return false; //to cancel packet you dont need to add break;
 			}
 		}
 		return true;
