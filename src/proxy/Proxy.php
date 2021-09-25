@@ -17,8 +17,6 @@ use proxy\hosts\{
 use raklib\protocol\{
 	ACK, OpenConnectionRequest1, UnconnectedPing, UnconnectedPong
 };
-use raklib\server\UDPServerSocket;
-use raklib\utils\InternetAddress;
 
 class Proxy{
 
@@ -37,9 +35,9 @@ class Proxy{
 	 * @param int    $serverPort
 	 * @param string $interface
 	 * @param int    $bindPort
-	 * @param bool $withoutPlugins
+	 * @param bool   $withoutPlugins
 	 */
-	public function __construct(string $serverAddress, int $serverPort = 19132, string $interface = "0.0.0.0", int $bindPort = 19132, bool $withoutPlugins = false){
+	public function __construct(string $serverAddress, int $serverPort = 19132, string $interface = "0.0.0.0", int $bindPort = 19132, $withoutPlugins = false){
 		Terminal::init();
 		PacketPool::init();
 		Packet::init();
@@ -51,14 +49,20 @@ class Proxy{
 		$this->server = new Server($this, new Address($serverAddress, $serverPort));
 		$this->client = new Client($this, null);
 
-		//$this->socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
-        $address = new InternetAddress($interface, $serverPort, 4);
-        $this->socket = new UDPServerSocket($address);
+		$this->socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
+		if(!socket_bind($this->socket, $interface, $bindPort)){
+			Log::Error("Failed to bind to $interface:$bindPort");
+			exit(1);
+		}
+
+		socket_set_option($this->socket, SOL_SOCKET, SO_SNDBUF, 1024 * 1024 * 8);
+		socket_set_option($this->socket, SOL_SOCKET, SO_RCVBUF, 1024 * 1024 * 8);
+
 		$withoutPlugins ? Log::Warn("Plugins have been disabled.") : $this->enablePlugins();
 
 		while(true){
-			if($this->socket->readPacket($buffer, $address->ip, $serverPort) !== false){
-				$internetAddress = new Address($address->ip, $serverPort);
+			if(@socket_recvfrom($this->socket, $buffer, 65535, 0, $address, $port) !== false){
+				$internetAddress = new Address($address, $port);
 				if(!$this->client->connected){
 					switch(ord($buffer[0])){
 						case UnconnectedPing::$ID:
@@ -101,7 +105,7 @@ class Proxy{
 			if(!empty($this->plugins)){
 				foreach($this->plugins as $plugin){
 					if(!($host instanceof Client ? $plugin->handleClientDataPacket($packet) : $plugin->handleServerDataPacket($packet))){
-						$ack = new ACK();
+						$ack = new ACK;
 						$ack->packets[] = Packet::$storage[$packet];
 						$ack->encode();
 						$host->writePacket($ack->buffer);
@@ -133,7 +137,7 @@ class Proxy{
 	 * @param int    $port
 	 */
 	public function writePacket(string $buffer, string $host, int $port) : void{
-		$this->socket->writePacket($buffer, $host, $port);
+		socket_sendto($this->socket, $buffer, strlen($buffer), 0, $host, $port);
 	}
 
 	/**
@@ -157,7 +161,8 @@ class Proxy{
 				if(isset($yml["name"]) && isset($yml["main"])){
 					Log::Info("Loading plugin \"" . $yml["name"] . "\"...");
 					if(file_exists($main = dirname($yml_file) . "/src/" . str_replace("\\", "/", $yml["main"]) . ".php")){
-                        require_once $main;
+						/** @noinspection PhpIncludeInspection */
+						require_once $main;
 						if(class_exists($yml["main"])){
 							$plugin = new $yml["main"]($this);
 							if($plugin instanceof Plugin){
