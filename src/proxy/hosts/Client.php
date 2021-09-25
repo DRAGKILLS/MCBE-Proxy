@@ -39,7 +39,7 @@ class Client extends BaseHost{
 	}
 
 	public function sendMessage(string $message, int $type = TextPacket::TYPE_RAW) : void{
-		$pk = new TextPacket;
+		$pk = new TextPacket();
 		$pk->type = $type;
 		$pk->message = $message;
 		$pk->source = "";
@@ -47,7 +47,7 @@ class Client extends BaseHost{
 	}
 
 	public function setGamemode(int $gamemode) : void{
-		$pk = new SetPlayerGameTypePacket;
+		$pk = new SetPlayerGameTypePacket();
 		$pk->gamemode = $gamemode;
 		$this->dataPacket($pk);
 	}
