@@ -1,4 +1,7 @@
+bin/*
 bin*/*
 .idea/
+.idea*/
 vendor/*
+vendor*/*
 config.yml
