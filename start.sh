@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 if [ -d "bin/php7/bin/php" ]; then
   echo ""
 else
