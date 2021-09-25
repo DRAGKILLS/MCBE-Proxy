@@ -16,8 +16,13 @@ namespace proxy {
 		exit(1);
 	}
 
+
+	if(!is_dir("plugins")){
+	   mkdir("plugins");
+	}
+
 	$config = new Config("config.yml", Config::YAML, [
-		'server-ip' => 'example.com',
+		'server-ip' => 'play.lbsg.net',
 		'server-port' => 19132,
 		'interface' => '0.0.0.0',
 		'bind-port' => 19132,
