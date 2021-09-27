@@ -10,3 +10,5 @@ Simple proxy for Minecraft Bedrock Edition.
 - Install composer and all it's dependencies.
 - Run it.
 - ___Do not forget edit config.yml___
+## Tested In:
+Lifeboat
