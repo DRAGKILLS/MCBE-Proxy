@@ -66,13 +66,11 @@ class Packet{
 
     public static function decodeSplit(EncapsulatedPacket $packet) : ?EncapsulatedPacket{
 	if($packet->splitCount >= self::MAX_SPLIT_SIZE or $packet->splitIndex >= self::MAX_SPLIT_SIZE or $packet->splitIndex < 0){
-			return;
+			return null;
 		}
-
-
 		if(!isset($this->splitPackets[$packet->splitID])){
 			if(count($this->splitPackets) >= self::MAX_SPLIT_COUNT){
-				return;
+				return null;
 			}
 			$this->splitPackets[$packet->splitID] = [$packet->splitIndex => $packet];
 		}else{
@@ -85,10 +83,8 @@ class Packet{
 			for($i = 0; $i < $packet->splitCount; ++$i){
 				$pk->buffer .= $this->splitPackets[$packet->splitID][$i]->buffer;
 			}
-
 			$pk->length = strlen($pk->buffer);
 			unset($this->splitPackets[$packet->splitID]);
-
 			$this->handleEncapsulatedPacketRoute($pk);
 		}
 	   return null;
