@@ -76,23 +76,23 @@ class Packet{
 		if($packet->splitCount >= self::MAX_SPLIT_SIZE or $packet->splitIndex >= self::MAX_SPLIT_SIZE or $packet->splitIndex < 0){
 			return null;
 		}
-		if(!isset($this->splitPackets[$packet->splitID])){
-			if(count($this->splitPackets) >= self::MAX_SPLIT_COUNT){
+		if(!isset(self::$splitPackets[$packet->splitID])){
+			if(count(self::$splitPackets) >= self::MAX_SPLIT_COUNT){
 				return null;
 			}
-			$this->splitPackets[$packet->splitID] = [$packet->splitIndex => $packet];
+			self::$splitPackets[$packet->splitID] = [$packet->splitIndex => $packet];
 		}else{
-			$this->splitPackets[$packet->splitID][$packet->splitIndex] = $packet;
+			self::$splitPackets[$packet->splitID][$packet->splitIndex] = $packet;
 		}
 
-		if(count($this->splitPackets[$packet->splitID]) === $packet->splitCount){
+		if(count(self::$splitPackets[$packet->splitID]) === $packet->splitCount){
 			$pk = new EncapsulatedPacket();
 			$pk->buffer = "";
 			for($i = 0; $i < $packet->splitCount; ++$i){
-				$pk->buffer .= $this->splitPackets[$packet->splitID][$i]->buffer;
+				$pk->buffer .= self::$splitPackets[$packet->splitID][$i]->buffer;
 			}
 			$pk->length = strlen($pk->buffer);
-			unset($this->splitPackets[$packet->splitID]);
+			unset(self::$splitPackets[$packet->splitID]);
 			$server = Server::getInstance();
 			$server->handleEncapsulatedPacketRoute($pk);
 		}
