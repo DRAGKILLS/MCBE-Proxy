@@ -16,6 +16,7 @@ use raklib\server\Session;
 use raklib\server\Server;
 use raklib\protocol\ACK;
 use raklib\protocol\NACK;
+use raklib\protocol\PacketSerializer;
 
 class Packet{
 
@@ -40,11 +41,15 @@ class Packet{
      */
     public static function readDataPacket(string $buffer) : ?DataPacket{
         $pid = ord($buffer[0]);
-        if(($pid & Datagram::BITFLAG_VALID) !== 0){
+	if(($pid & Datagram::BITFLAG_VALID) !== 0){
             if($pid & Datagram::BITFLAG_ACK !== 0){
                 $packet = new ACK();
+		$packet->decode(new PacketSerializer($buffer));
+		//packet -> handlePacket
             }elseif($pid & Datagram::BITFLAG_NAK !== 0){
                 $packet = new NACK();
+		$packet->decode(new PacketSerializer($buffer));
+		//packet -> handlePacket
             }else{
                 if(($datagram = new Datagram($buffer)) instanceof Datagram){
                     $datagram->decode();
