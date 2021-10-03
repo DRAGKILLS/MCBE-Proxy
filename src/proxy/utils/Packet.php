@@ -67,7 +67,7 @@ class Packet{
     }
 
     public static function decodeSplit(EncapsulatedPacket $packet) : ?EncapsulatedPacket{
-	if($packet->splitCount >= self::MAX_SPLIT_SIZE or $packet->splitIndex >= self::MAX_SPLIT_SIZE or $packet->splitIndex < 0){
+		if($packet->splitCount >= self::MAX_SPLIT_SIZE or $packet->splitIndex >= self::MAX_SPLIT_SIZE or $packet->splitIndex < 0){
 			return null;
 		}
 		if(!isset($this->splitPackets[$packet->splitID])){
