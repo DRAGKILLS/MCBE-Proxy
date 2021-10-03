@@ -13,6 +13,7 @@ use raklib\protocol\{
     Datagram, EncapsulatedPacket
 };
 use raklib\server\Session;
+use raklib\server\Server;
 use raklib\protocol\ACK;
 use raklib\protocol\NACK;
 
