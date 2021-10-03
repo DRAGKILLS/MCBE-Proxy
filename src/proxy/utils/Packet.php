@@ -88,7 +88,8 @@ class Packet{
 			}
 			$pk->length = strlen($pk->buffer);
 			unset($this->splitPackets[$packet->splitID]);
-			//$this->handleEncapsulatedPacketRoute($pk);
+			$server = Server::getInstance();
+			$server->handleEncapsulatedPacketRoute($pk);
 		}
 	   return null;
     }
