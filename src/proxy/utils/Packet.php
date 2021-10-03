@@ -40,9 +40,9 @@ class Packet{
     public static function readDataPacket(string $buffer) : ?DataPacket{
         $pid = ord($buffer[0]);
         if(($pid & Datagram::BITFLAG_VALID) !== 0){
-            if($pid & Datagram::BITFLAG_ACK){
+            if($pid & Datagram::BITFLAG_ACK !== 0){
                 $packet = new ACK();
-            }elseif($pid & Datagram::BITFLAG_NAK){
+            }elseif($pid & Datagram::BITFLAG_NAK !== 0){
                 $packet = new NACK();
             }else{
                 if(($datagram = new Datagram($buffer)) instanceof Datagram){
