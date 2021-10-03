@@ -13,6 +13,8 @@ use raklib\protocol\{
     Datagram, EncapsulatedPacket
 };
 use raklib\server\Session;
+use raklib\protocol\ACK;
+use raklib\protocol\NACK;
 
 class Packet{
 
@@ -39,9 +41,9 @@ class Packet{
         $pid = ord($buffer[0]);
         if(($pid & Datagram::BITFLAG_VALID) !== 0){
             if($pid & Datagram::BITFLAG_ACK){
-                //todo
+                $packet = new ACK();
             }elseif($pid & Datagram::BITFLAG_NAK){
-                //todo
+                $packet = new NACK();
             }else{
                 if(($datagram = new Datagram($buffer)) instanceof Datagram){
                     $datagram->decode();
