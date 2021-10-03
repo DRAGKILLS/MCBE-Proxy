@@ -65,31 +65,33 @@ class Packet{
     }
 
     public static function decodeSplit(EncapsulatedPacket $packet) : ?EncapsulatedPacket{
-        if($packet->splitCount >= self::MAX_SPLIT_SIZE or $packet->splitIndex >= self::MAX_SPLIT_SIZE or $packet->splitIndex < 0){
-            return null;
-        }
+	if($packet->splitCount >= self::MAX_SPLIT_SIZE or $packet->splitIndex >= self::MAX_SPLIT_SIZE or $packet->splitIndex < 0){
+			return;
+		}
 
-        if(!isset(self::$splitPackets[$packet->splitID])){
-            if(count(self::$splitPackets) >= self::MAX_SPLIT_COUNT){
-                return null;
-            }
-            self::$splitPackets[$packet->splitID] = [$packet->splitIndex => $packet];
-        }else{
-            self::$splitPackets[$packet->splitID][$packet->splitIndex] = $packet;
-        }
 
-        if(count(self::$splitPackets[$packet->splitID]) === $packet->splitCount){
-            $pk = new EncapsulatedPacket();
-            $pk->buffer = "";
-            for($i = 0; $i < $packet->splitCount; ++$i){
-                $pk->buffer .= self::$splitPackets[$packet->splitID][$i]->buffer;
-            }
+		if(!isset($this->splitPackets[$packet->splitID])){
+			if(count($this->splitPackets) >= self::MAX_SPLIT_COUNT){
+				return;
+			}
+			$this->splitPackets[$packet->splitID] = [$packet->splitIndex => $packet];
+		}else{
+			$this->splitPackets[$packet->splitID][$packet->splitIndex] = $packet;
+		}
 
-            $pk->length = strlen($pk->buffer);
-            unset(self::$splitPackets[$packet->splitID]);
-            return $pk;
-        }
-        return null;
+		if(count($this->splitPackets[$packet->splitID]) === $packet->splitCount){
+			$pk = new EncapsulatedPacket();
+			$pk->buffer = "";
+			for($i = 0; $i < $packet->splitCount; ++$i){
+				$pk->buffer .= $this->splitPackets[$packet->splitID][$i]->buffer;
+			}
+
+			$pk->length = strlen($pk->buffer);
+			unset($this->splitPackets[$packet->splitID]);
+
+			$this->handleEncapsulatedPacketRoute($pk);
+		}
+	   return null;
     }
 
     public static function decodeBatch(EncapsulatedPacket $encapsulatedPacket) : ?DataPacket{
