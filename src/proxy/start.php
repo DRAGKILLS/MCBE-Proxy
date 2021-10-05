@@ -9,7 +9,6 @@ namespace proxy {
 	const COMPOSER = 'vendor/autoload.php';
 
 	if(is_file(COMPOSER)){
-		/** @noinspection PhpIncludeInspection */
 		require_once(COMPOSER);
 	}else{
 		echo "[-] Composer autoloader not found." . PHP_EOL;
@@ -18,7 +17,7 @@ namespace proxy {
 
 
 	if(!is_dir("plugins")){
-	   mkdir("plugins");
+	   @mkdir("plugins", 0777, true);
 	}
 
 	$config = new Config("config.yml", Config::YAML, [
